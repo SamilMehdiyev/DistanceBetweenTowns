@@ -3,98 +3,89 @@ package com.java.main;
 import com.java.business.implementations.RailRoadServiceImpl;
 import com.java.business.interfaces.IRailRoadService;
 import com.java.domain.RailRoadMap;
-import com.java.domain.Route;
 import com.java.domain.Town;
-import com.java.util.RailRoadMapInitializer;
-import org.junit.Before;
-import org.junit.Test;
-
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import com.java.exception.RouteUniquenessException;
+import com.java.util.ErrorCode;
+import com.java.util.RailRoadMapUtility;
+import org.junit.*;
+import org.junit.rules.ExpectedException;
 
 import static org.junit.Assert.*;
 import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.Matchers.hasProperty;
 
 /**
  * Created by Shamil on 10-Apr-18.
  */
 public class RailRoadInformationServiceTest {
 
+    private String railRoadGraphic;
     private IRailRoadService service;
     private RailRoadMap railRoadMap;
 
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
 
     @Before
     public void createRailRoadService(){
-        service = new RailRoadServiceImpl();
+        railRoadGraphic = "AB5, BC4, CD8, DC8, DE6, AD5, CE2, EB3, AE7";
         railRoadMap = initialize();
+        service = new RailRoadServiceImpl(railRoadMap);
     }
 
     @Test
     public void trueWhenGivenDistanceMatchesToDistanceBetweenTwoTowns(){
-        assertThat(9, equalTo(service.getDistance(railRoadMap, new Town[]{new Town("A"), new Town("B"), new Town("C")})));
+        assertThat(9, equalTo(service.getDistance( new Town[]{new Town("A"), new Town("B"), new Town("C")})));
     }
 
-    private static RailRoadMap initialize(){
+    @Test
+    public void throwExceptionWhenGivenRouteAppearMoreThanOneInRailRoadTracks() throws RouteUniquenessException{
+        thrown.expect(RouteUniquenessException.class);
+        thrown.expect(hasProperty("code", is(ErrorCode.UNIQUENESS_FAILED)));
+        RailRoadMapUtility.checkRouteUniquenessInRailRoadGraphic(railRoadGraphic);
+    }
 
-        /*Map<Town, Set<Route>> railRoadTracks = new HashMap<>();
-        Map<Route, Integer> distances = new HashMap<>();
-        Set<Town> towns = new HashSet<>();
+    @Test
+    public void trueWhenGivenCountMatchesTotalRoutesBetweenTwoTownsWithMax3Stops(){
 
-        Town townA = new Town("A");
-        Town townB = new Town("B");
-        Town townC = new Town("C");
-        Town townD = new Town("D");
-        Town townE = new Town("E");
+        // Arrange Part
+        Town startPoint = new Town("A");
+        Town endPoint = new Town("C");
 
-        Set<Route> townARoutes = new HashSet<>();
-        townARoutes.add(new Route(townA, townB));
-        townARoutes.add(new Route(townA, townD));
-        townARoutes.add(new Route(townA, townE));
+        // Act Part
+        int count = 0;
+        for (int i = 1; i <= 3; i++) {
+            count += service.getTotalRoutesBetweenTwoTownsWithDefinedMaxStops(startPoint, endPoint, 0, i);
+        }
 
-        Set<Route> townBRoutes = new HashSet<>();
-        townBRoutes.add(new Route(townB, townC));
+        // Assert Part
+        assertThat(3, equalTo(count));
+    }
 
-        Set<Route> townCRoutes = new HashSet<>();
-        townCRoutes.add(new Route(townC, townD));
-        townCRoutes.add(new Route(townC, townE));
+    @Test
+    public void trueWhenGivenDistanceMatchesToShortDistanceBetweenTwoTowns(){
 
-        Set<Route> townDRoutes = new HashSet<>();
-        townDRoutes.add(new Route(townD, townC));
-        townDRoutes.add(new Route(townD, townE));
+        // Arrange Part
+        Town startPoint = new Town("A");
+        Town endPoint = new Town("C");
 
-        Set<Route> townERoutes = new HashSet<>();
-        townERoutes.add(new Route(townE, townB));
+        // Assert&Act Part
+        assertThat(9, equalTo(service.getShortestDistanceBetweenTwoTowns(startPoint, endPoint)));
+    }
 
-        railRoadTracks.put(townA, townARoutes);
-        railRoadTracks.put(townB, townBRoutes);
-        railRoadTracks.put(townC, townCRoutes);
-        railRoadTracks.put(townD, townDRoutes);
-        railRoadTracks.put(townE, townERoutes);
+    @Test
+    public void trueThenGivenNumberMatchesToNumberOfRoutesBetweenTwoTownsWithDistanceLessThan30(){
 
-        towns.add(townA);
-        towns.add(townB);
-        towns.add(townC);
-        towns.add(townD);
-        towns.add(townE);
+        // Arrange Part
+        Town startPoint = new Town("A");
+        Town endPoint = new Town("D");
 
-        distances.put(new Route(townA, townB), 5);
-        distances.put(new Route(townA, townD), 5);
-        distances.put(new Route(townA, townE), 7);
+        // Assert&Act Part
+        assertThat(6, equalTo(service.getTotalRoutesBetweenTwoTownsWithDistanceLessThan30(startPoint, endPoint, 0, 30)));
+    }
 
-        distances.put(new Route(townB, townC), 4);
-
-        distances.put(new Route(townC, townD), 8);
-        distances.put(new Route(townC, townE), 2);
-
-        distances.put(new Route(townD, townC), 8);
-        distances.put(new Route(townD, townE), 6);
-
-        distances.put(new Route(townE, townB), 3);*/
-
-        return RailRoadMapInitializer.initializeRailRoadMap("AB5, BC4, CD8, DC8, DE6, AD5, CE2, EB3, AE7");
+    private RailRoadMap initialize(){
+        return RailRoadMapUtility.initializeRailRoadMap(railRoadGraphic);
     }
 
 }

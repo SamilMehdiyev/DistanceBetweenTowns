@@ -8,17 +8,17 @@ import java.util.Set;
  */
 public class RailRoadMap {
 
-    private Map<Town, Set<Route>> railRoadTracks;
+    private Map<Town, Set<Town>> railRoadTracks;
     private Map<Route, Integer> distances;
     private Set<Town> towns;
 
-    public RailRoadMap(Map<Town, Set<Route>> railRoadTracks, Map<Route, Integer> distances, Set<Town> towns) {
+    public RailRoadMap(Map<Town, Set<Town>> railRoadTracks, Map<Route, Integer> distances, Set<Town> towns) {
         this.railRoadTracks = railRoadTracks;
         this.distances = distances;
         this.towns = towns;
     }
 
-    public Map<Town, Set<Route>> getRailRoadTracks() {
+    public Map<Town, Set<Town>> getRailRoadTracks() {
         return railRoadTracks;
     }
 
