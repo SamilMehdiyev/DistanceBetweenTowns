@@ -4,7 +4,6 @@ import com.java.business.implementations.RailRoadServiceImpl;
 import com.java.business.interfaces.IRailRoadService;
 import com.java.domain.RailRoadMap;
 import com.java.domain.Town;
-import com.java.exception.RouteUniquenessException;
 import com.java.util.ErrorCode;
 import com.java.util.RailRoadMapUtility;
 
