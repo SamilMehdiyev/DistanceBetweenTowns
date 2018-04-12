@@ -3,26 +3,26 @@ package com.java.exception;
 import com.java.util.ErrorCode;
 
 /**
- * Created by Shamil on 11-Apr-18.
+ * Created by Shamil on 12-Apr-18.
  */
-public class RouteUniquenessException extends RuntimeException {
+public class StartAndEndTownSamenessException extends RuntimeException {
     
     private static final long serialVersionUID = 7718828512143293558L;
     private final ErrorCode code;
-    
-    public RouteUniquenessException(ErrorCode code) {
+
+    public StartAndEndTownSamenessException(ErrorCode code) {
         super(code.toString());
         this.code = code;
     }
-    public RouteUniquenessException(String message, Throwable cause, ErrorCode code) {
+    public StartAndEndTownSamenessException(String message, Throwable cause, ErrorCode code) {
         super(message, cause);
         this.code = code;
     }
-    public RouteUniquenessException(String message, ErrorCode code) {
+    public StartAndEndTownSamenessException(String message, ErrorCode code) {
         super(message);
         this.code = code;
     }
-    public RouteUniquenessException(Throwable cause, ErrorCode code) {
+    public StartAndEndTownSamenessException(Throwable cause, ErrorCode code) {
         super(cause);
         this.code = code;
     }

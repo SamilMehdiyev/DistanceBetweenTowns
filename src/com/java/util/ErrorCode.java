@@ -5,7 +5,10 @@ package com.java.util;
  */
 public enum ErrorCode {
 
-    UNIQUENESS_FAILED(1000, "Failed", "Exist duplication in rail-road graphic");
+    UNIQUENESS_FAILED(1000, "Failed", "Exist duplication in rail-road graphic."),
+    SAMENESS_FAILED(1001, "Failed", "Route contains the same town."),
+    RAILROAD_GRAPHIC_CORRECTNESS_FAILED(1002, "Failed", "Rail-road graphic is wrong."),
+    NO_SUCH_ROUTE(1003, "Failed", "No such route exist");
 
     private int code;
     private String label;

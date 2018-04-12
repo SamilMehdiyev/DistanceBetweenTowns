@@ -5,10 +5,16 @@ import com.java.business.interfaces.IRailRoadService;
 import com.java.domain.RailRoadMap;
 import com.java.domain.Town;
 import com.java.exception.RouteUniquenessException;
+import com.java.exception.StartAndEndTownSamenessException;
+import com.java.exception.WrongRailRoadGraphicException;
 import com.java.util.ErrorCode;
 import com.java.util.RailRoadMapUtility;
 import org.junit.*;
 import org.junit.rules.ExpectedException;
+
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static org.junit.Assert.*;
 import static org.hamcrest.CoreMatchers.*;
@@ -29,19 +35,26 @@ public class RailRoadInformationServiceTest {
     @Before
     public void createRailRoadService(){
         railRoadGraphic = "AB5, BC4, CD8, DC8, DE6, AD5, CE2, EB3, AE7";
-        railRoadMap = initialize();
+        railRoadMap = RailRoadMapUtility.initializeRailRoadMap(railRoadGraphic);
         service = new RailRoadServiceImpl(railRoadMap);
     }
 
     @Test
     public void trueWhenGivenDistanceMatchesToDistanceBetweenTwoTowns(){
+
+        // Assert Part
         assertThat(9, equalTo(service.getDistance( new Town[]{new Town("A"), new Town("B"), new Town("C")})));
     }
 
     @Test
-    public void throwExceptionWhenGivenRouteAppearMoreThanOneInRailRoadTracks() throws RouteUniquenessException{
+    public void throwExceptionWhenGivenRouteAppearMoreThanOneInRailRoadTracks(){
+
+        // Arrange Part
+        railRoadGraphic = "AB5, BC4, CD8, DC8, DE6, AD5, CE2, AB3, AE7";
         thrown.expect(RouteUniquenessException.class);
         thrown.expect(hasProperty("code", is(ErrorCode.UNIQUENESS_FAILED)));
+
+        // Act Part
         RailRoadMapUtility.checkRouteUniquenessInRailRoadGraphic(railRoadGraphic);
     }
 
@@ -84,8 +97,28 @@ public class RailRoadInformationServiceTest {
         assertThat(6, equalTo(service.getTotalRoutesBetweenTwoTownsWithDistanceLessThan30(startPoint, endPoint, 0, 30)));
     }
 
-    private RailRoadMap initialize(){
-        return RailRoadMapUtility.initializeRailRoadMap(railRoadGraphic);
+    @Test
+    public void throwExceptionWhenInGivenGraphicRouteStartAndEndTownIsTheSame(){
+
+        // Arrange Part
+        railRoadGraphic = "AA5, BC4, CD8, DC8, DE6, AD5, CE2, EB3, AE7";
+        thrown.expect(StartAndEndTownSamenessException.class);
+        thrown.expect(hasProperty("code", is(ErrorCode.SAMENESS_FAILED)));
+
+        // Act Part
+        RailRoadMapUtility.checkRouteSamenessInRailRoadGraphic(railRoadGraphic);
+
     }
 
+    @Test
+    public void throwExceptionWhenRailRoadGraphicIsWrong(){
+
+        // Arrange Part
+        railRoadGraphic = "AAF5, BC4, CD8, DC8, DE6, AD5, CE2, EB3, AE7";
+        thrown.expect(WrongRailRoadGraphicException.class);
+        thrown.expect(hasProperty("code", is(ErrorCode.RAILROAD_GRAPHIC_CORRECTNESS_FAILED)));
+
+        // Act Part
+        RailRoadMapUtility.checkCorrectnessOfRailRoadGraphic(railRoadGraphic);
+    }
 }
