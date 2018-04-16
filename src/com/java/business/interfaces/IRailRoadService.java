@@ -14,4 +14,6 @@ public interface IRailRoadService {
     Integer getShortestDistanceBetweenTwoTowns(Town startPoint, Town endPoint);
 
     Integer getTotalRoutesBetweenTwoTownsWithDistanceLessThan30(Town startPoint, Town endPoint, int currentDistance, int maxDistance);
+
+    String getShortestRouteBetweenTwoTowns(Town startPoint, Town endPoint);
 }

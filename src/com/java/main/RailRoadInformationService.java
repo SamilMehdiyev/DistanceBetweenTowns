@@ -40,6 +40,7 @@ public class RailRoadInformationService {
                     System.out.println("Output #8: " + getShortestDistanceBetweenTownAAndTownC(railRoadService));
                     System.out.println("Output #9: " + getShortestDistanceBetweenTownBAndTownB(railRoadService));
                     System.out.println("Output #10: " + getTotalRoutesBetweenTownCAndTownCWithDistanceLessThan30(railRoadService));
+                    System.out.println("Output #11: " + getShortestDistanceBetweenTownAAndTownE(railRoadService));
 
                 }
             }
@@ -86,14 +87,21 @@ public class RailRoadInformationService {
     }
 
     private static String getShortestDistanceBetweenTownAAndTownC(IRailRoadService railRoadService) {
-        return String.valueOf(railRoadService.getShortestDistanceBetweenTwoTowns(new Town("A"), new Town("C")));
+        return String.valueOf(railRoadService.getShortestDistanceBetweenTwoTowns(new Town("A"), new Town("C")) +
+                " Shortest route:" + railRoadService.getShortestRouteBetweenTwoTowns(new Town("A"),  new Town("C")));
     }
 
     private static String getShortestDistanceBetweenTownBAndTownB(IRailRoadService railRoadService) {
-        return String.valueOf(railRoadService.getShortestDistanceBetweenTwoTowns(new Town("B"), new Town("B")));
+        return String.valueOf(railRoadService.getShortestDistanceBetweenTwoTowns(new Town("B"), new Town("B")) +
+                " Shortest route:" + railRoadService.getShortestRouteBetweenTwoTowns(new Town("B"),  new Town("B")));
     }
 
     private static String getTotalRoutesBetweenTownCAndTownCWithDistanceLessThan30(IRailRoadService railRoadService) {
         return String.valueOf(railRoadService.getTotalRoutesBetweenTwoTownsWithDistanceLessThan30(new Town("C"), new Town("C"), 0, 30));
+    }
+
+    private static String getShortestDistanceBetweenTownAAndTownE(IRailRoadService railRoadService) {
+        return String.valueOf(railRoadService.getShortestDistanceBetweenTwoTowns(new Town("A"), new Town("E")) +
+                " Shortest route:" + railRoadService.getShortestRouteBetweenTwoTowns(new Town("A"),  new Town("E")));
     }
 }

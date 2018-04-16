@@ -9,12 +9,15 @@ import com.java.exception.StartAndEndTownSamenessException;
 import com.java.exception.WrongRailRoadGraphicException;
 import com.java.util.ErrorCode;
 import com.java.util.RailRoadMapUtility;
-import org.junit.*;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-import static org.junit.Assert.*;
-import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.hasProperty;
+import static org.junit.Assert.assertThat;
 
 /**
  * Created by Shamil on 10-Apr-18.
@@ -80,6 +83,17 @@ public class RailRoadInformationServiceTest {
 
         // Assert&Act Part
         assertThat(9, equalTo(service.getShortestDistanceBetweenTwoTowns(startPoint, endPoint)));
+    }
+
+    @Test
+    public void trueWhenGivenRouteMatchesToShortRouteBetweenTwoTowns(){
+
+        // Arrange Part
+        Town startPoint = new Town("B");
+        Town endPoint = new Town("B");
+
+        // Assert&Act Part
+        assertThat("B-C-E-B", equalTo(service.getShortestRouteBetweenTwoTowns(startPoint, endPoint)));
     }
 
     @Test

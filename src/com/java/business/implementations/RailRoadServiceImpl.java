@@ -4,6 +4,7 @@ import com.java.business.interfaces.IRailRoadService;
 import com.java.domain.RailRoadMap;
 import com.java.domain.Route;
 import com.java.domain.Town;
+import com.java.util.Constants;
 
 import java.util.*;
 
@@ -62,36 +63,7 @@ public class RailRoadServiceImpl implements IRailRoadService {
 
     @Override
     public Integer getShortestDistanceBetweenTwoTowns(Town startPoint, Town endPoint) {
-
-        Map<Town, Integer> shortDistancesFromStartPointToOtherTowns = new HashMap<>();
-        Set<Town> visitedTowns = new HashSet<>();
-        Queue<Town> townQueueForVisiting = new LinkedList<>();
-
-        for(Town town: railRoadMap.getTowns()){
-            shortDistancesFromStartPointToOtherTowns.put(town, Integer.MAX_VALUE);
-        }
-        shortDistancesFromStartPointToOtherTowns.put(startPoint, 0);
-        townQueueForVisiting.add(startPoint);
-
-        while (!townQueueForVisiting.isEmpty()){
-            Town currentTown = townQueueForVisiting.poll();
-            if(visitedTowns.contains(currentTown))
-                continue;
-
-            visitedTowns.add(currentTown);
-
-            for(Town town: railRoadMap.getRailRoadTracks().get(currentTown)){
-                int currentDistance = shortDistancesFromStartPointToOtherTowns.get(currentTown);
-                int distanceBetweenCurrentTownAndTown = railRoadMap.getDistances().get(new Route(currentTown, town));
-                if(((currentDistance + distanceBetweenCurrentTownAndTown) < shortDistancesFromStartPointToOtherTowns.get(town)) ||
-                        (startPoint.equals(endPoint))){
-                    shortDistancesFromStartPointToOtherTowns.put(town, currentDistance + distanceBetweenCurrentTownAndTown);
-                    townQueueForVisiting.add(town);
-                }
-            }
-        }
-
-
+        Map<Town, Integer> shortDistancesFromStartPointToOtherTowns = (Map<Town, Integer>) getShortestRouteInformationBetweenTwoTowns(startPoint, endPoint, Constants.DISTANCES);
         return shortDistancesFromStartPointToOtherTowns.get(endPoint);
     }
 
@@ -113,5 +85,65 @@ public class RailRoadServiceImpl implements IRailRoadService {
         }
 
         return count;
+    }
+
+    @Override
+    public String getShortestRouteBetweenTwoTowns(Town startPoint, Town endPoint) {
+        Map<Town, Town> parents = (Map<Town, Town>) getShortestRouteInformationBetweenTwoTowns(startPoint, endPoint, Constants.PARENTS);
+        StringBuilder route = new StringBuilder(endPoint.getName() + "-");
+
+        Town parent = new Town(endPoint.getName());
+        while(true){
+            route.append(parents.get(parent).getName());
+            if(parents.get(parent).equals(startPoint))
+                break;
+            route.append("-");
+            parent = parents.get(parent);
+        }
+
+
+        return route.reverse().toString();
+    }
+
+    private Object getShortestRouteInformationBetweenTwoTowns(Town startPoint, Town endPoint, String expectedInformation){
+
+        Map<Town, Integer> shortDistancesFromStartPointToOtherTowns = new HashMap<>();
+        Map<Town, Town> parents = new HashMap<>();
+
+        Set<Town> visitedTowns = new HashSet<>();
+        Queue<Town> townQueueForVisiting = new LinkedList<>();
+
+        for(Town town: railRoadMap.getTowns()){
+            shortDistancesFromStartPointToOtherTowns.put(town, Integer.MAX_VALUE);
+            parents.put(town, null);
+        }
+        shortDistancesFromStartPointToOtherTowns.put(startPoint, 0);
+        parents.put(startPoint, startPoint);
+        townQueueForVisiting.add(startPoint);
+
+        whileLoop:
+        while (!townQueueForVisiting.isEmpty()){
+            Town currentTown = townQueueForVisiting.poll();
+            if(visitedTowns.contains(currentTown))
+                continue;
+
+            visitedTowns.add(currentTown);
+
+            for(Town town: railRoadMap.getRailRoadTracks().get(currentTown)){
+                int currentDistance = shortDistancesFromStartPointToOtherTowns.get(currentTown);
+                int distanceBetweenCurrentTownAndTown = railRoadMap.getDistances().get(new Route(currentTown, town));
+                if(((currentDistance + distanceBetweenCurrentTownAndTown) < shortDistancesFromStartPointToOtherTowns.get(town)) ||
+                        (startPoint.equals(endPoint))){
+                    shortDistancesFromStartPointToOtherTowns.put(town, currentDistance + distanceBetweenCurrentTownAndTown);
+                    townQueueForVisiting.add(town);
+                    parents.put(town, currentTown);
+                }
+                if(town.equals(startPoint))
+                    break whileLoop;
+            }
+        }
+
+        return expectedInformation.equals(Constants.DISTANCES) ? shortDistancesFromStartPointToOtherTowns :
+                (expectedInformation.equals(Constants.PARENTS) ? parents : new IllegalArgumentException("Given parameter is wrong"));
     }
 }
