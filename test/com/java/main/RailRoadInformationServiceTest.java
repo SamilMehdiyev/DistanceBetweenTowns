@@ -93,7 +93,7 @@ public class RailRoadInformationServiceTest {
         Town endPoint = new Town("B");
 
         // Assert&Act Part
-        assertThat("B-C-E-B", equalTo(service.getShortestRouteBetweenTwoTowns(startPoint, endPoint)));
+        assertThat("B-C-E-BE", equalTo(service.getShortestRouteBetweenTwoTowns(startPoint, endPoint)));
     }
 
     @Test
